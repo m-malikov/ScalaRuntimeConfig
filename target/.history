@@ -1,1 +1,3 @@
 run
+;reload; set _root_.org.jetbrains.sbt.StructureKeys.sbtStructureOptions in Global := "download resolveClassifiers" ;*/*:dumpStructureTo /tmp/sbt-structure.xml
+all {file:/home/user/code/ScalaRuntimeConfig/}scalaruntimeconfig/products {file:/home/user/code/ScalaRuntimeConfig/}scalaruntimeconfig/test:products
