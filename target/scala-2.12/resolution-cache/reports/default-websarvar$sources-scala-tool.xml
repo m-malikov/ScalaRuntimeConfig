@@ -7,7 +7,7 @@
 		revision="1.0"
 		conf="scala-tool"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
-		date="20171021190108"/>
+		date="20171021191247"/>
 	<dependencies>
 		<module organisation="org.scala-lang" name="scala-compiler">
 			<revision name="2.12.1" status="release" pubdate="20161205141035" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, optional, optional(default), master" position="1">
@@ -15,7 +15,7 @@
 				<metadata-artifact status="no" details="" size="3089" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-compiler/ivy-2.12.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.1/scala-compiler-2.12.1.pom"/>
 				<caller organisation="default" name="websarvar$sources" conf="scala-tool" rev="2.12.1" rev-constraint-default="2.12.1" rev-constraint-dynamic="2.12.1" callerrev="1.0"/>
 				<artifacts>
-					<artifact name="scala-compiler" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="1787297" time="2820" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-compiler/srcs/scala-compiler-2.12.1-sources.jar">
+					<artifact name="scala-compiler" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1787297" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-compiler/srcs/scala-compiler-2.12.1-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.12.1/scala-compiler-2.12.1-sources.jar"/>
 					</artifact>
 				</artifacts>
@@ -27,7 +27,7 @@
 				<metadata-artifact status="no" details="" size="5183" time="0" location="/home/valentiay/.ivy2/cache/jline/jline/ivy-2.14.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/jline/jline/2.14.1/jline-2.14.1.pom"/>
 				<caller organisation="default" name="websarvar$sources" conf="scala-tool" rev="2.14.1" rev-constraint-default="2.14.1" rev-constraint-dynamic="2.14.1" callerrev="1.0"/>
 				<artifacts>
-					<artifact name="jline" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="109898" time="837" location="/home/valentiay/.ivy2/cache/jline/jline/srcs/jline-2.14.1-sources.jar">
+					<artifact name="jline" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="109898" time="0" location="/home/valentiay/.ivy2/cache/jline/jline/srcs/jline-2.14.1-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/jline/jline/2.14.1/jline-2.14.1-sources.jar"/>
 					</artifact>
 				</artifacts>
@@ -51,7 +51,7 @@
 				<metadata-artifact status="no" details="" size="2825" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.12.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.1/scala-reflect-2.12.1.pom"/>
 				<caller organisation="default" name="websarvar$sources" conf="scala-tool" rev="2.12.1" rev-constraint-default="2.12.1" rev-constraint-dynamic="2.12.1" callerrev="1.0" extra-info.apiURL="http://www.scala-lang.org/api/2.12.1/"/>
 				<artifacts>
-					<artifact name="scala-reflect" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="572951" time="1447" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-reflect/srcs/scala-reflect-2.12.1-sources.jar">
+					<artifact name="scala-reflect" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="572951" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-reflect/srcs/scala-reflect-2.12.1-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.12.1/scala-reflect-2.12.1-sources.jar"/>
 					</artifact>
 				</artifacts>
@@ -63,7 +63,7 @@
 				<metadata-artifact status="no" details="" size="2653" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-library/ivy-2.12.1.xml" searched="false" origin-is-local="false" origin-location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.1/scala-library-2.12.1.pom"/>
 				<caller organisation="default" name="websarvar$sources" conf="scala-tool" rev="2.12.1" rev-constraint-default="2.12.1" rev-constraint-dynamic="2.12.1" callerrev="1.0" extra-info.apiURL="http://www.scala-lang.org/api/2.12.1/"/>
 				<artifacts>
-					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="988614" time="2318" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.1-sources.jar">
+					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="988614" time="0" location="/home/valentiay/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.1-sources.jar">
 						<origin-location is-local="false" location="https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.12.1/scala-library-2.12.1-sources.jar"/>
 					</artifact>
 				</artifacts>

@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % "10.0.10",
   "com.typesafe.akka" %% "akka-http-testkit" % "10.0.10" % Test
 )
+
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"
