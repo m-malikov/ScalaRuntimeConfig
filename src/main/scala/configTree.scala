@@ -17,10 +17,9 @@ object ConfigTree {
 
 case class ConfigTreeString(name: String, value: Option[Any]) extends ConfigTree {
   def getHtml: String = { value match {
-    case  Some(x) => s"<em>$name:</em> $x"
+    case  Some(x) => s"<em>$name:</em> <form><input type='text' value='$x'><input type='submit' value='update'></form>"
     case None => s"<span style='color:red'>$name</span>"
-    }
-  }
+  }}
 }
 
 case class ConfigTreeNode(name: String, children: Iterable[ConfigTree]) extends ConfigTree {
