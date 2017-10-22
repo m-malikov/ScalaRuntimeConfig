@@ -7,22 +7,11 @@ import com.typesafe.config._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
+import configtree.ConfigTree
 
+import scala.util.parsing.json.JSON
 
 object WebServer {
-
-  // Var and imperiative code caused by config using java map instead of scala
-  def objectToHtml(config: ConfigObject): String = {
-    var htmlString = "<ul>"
-    config.forEach((k, v) => {
-      htmlString = htmlString ++ "<li>"
-      v match {
-        case x: ConfigObject => htmlString = htmlString ++ k ++ "</li>" ++ objectToHtml(x)
-        case x => htmlString = htmlString ++ k ++ " - " ++ x.render(ConfigRenderOptions.concise()) ++ "</li>"
-      }
-    })
-    htmlString ++ "</ul>"
-  }
 
   def main(args: Array[String]) {
 
@@ -31,12 +20,14 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-    val conf: Config = ConfigFactory.load()
+    val conf: ConfigObject = ConfigFactory.load().getObject("my.organization")
+    val confJson = JSON.parseFull(conf.render(ConfigRenderOptions.concise()))
+    val confTree = ConfigTree("organization", confJson)
 
     val route =
       path("hello") {
         get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, objectToHtml(conf.getObject("my.organization"))))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, confTree.getHtml))
         }
       }
 
