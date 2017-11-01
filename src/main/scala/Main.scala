@@ -1,50 +1,46 @@
-import ConfigActor.{AddDependent, Update}
-import akka.actor.{ActorRef, ActorSystem}
-import akka.util.Timeout
-import akka.pattern.ask
-
-import scala.concurrent.Future
-import scala.concurrent.duration._
+import core.Component
 
 object Main extends App {
-  // Actor stuff
-  val system = ActorSystem("runtimeConfig")
-  // Future stuff
-  import system.dispatcher
-  implicit val timeout = Timeout(5 seconds)
-
   /*
   *  Configs hierarchy:
   *
-  *       0
-  *     /   \
-  *    2     1
-  *       /  |  \
-  *      12  11  10
-  *       |      |
-  *      120    100
+  *          1           2
+  *       /     \
+  *      12     11
+  *    /  |      | \
+  *  122 121    111 112
+  *                 |
+  *                 1121
   */
 
-  // Every config here is a Future
-  // config 0 is a Future for analogy with other configs.
-  val config0 = Future(system.actorOf(ConfigActor.props(0)))
-  // ask(x, AddDependent(1)).mapTo[ActorRef] returns Future[ActorRef] --- answer of actor
-  // containing ActorRef to newly created config actor
-  //
-  // flatMap is Future method applying function to Future result when it is evaluated
-  val config1 = config0.flatMap(ask(_, AddDependent(1)).mapTo[ActorRef])
-  val config10 = config1.flatMap(ask(_, AddDependent(10)).mapTo[ActorRef])
-  val config11 = config1.flatMap(ask(_, AddDependent(11)).mapTo[ActorRef])
-  val config12 = config1.flatMap(ask(_, AddDependent(12)).mapTo[ActorRef])
-  val config100 = config10.flatMap(ask(_, AddDependent(100)).mapTo[ActorRef])
-  val config121 = config12.flatMap(ask(_, AddDependent(120)).mapTo[ActorRef])
-  val config2 = config0.flatMap(ask(_, AddDependent(2)).mapTo[ActorRef])
+  val component1 = new Component("1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
+  val component11 = new Component("11", () => println("update 11"), (c) => println(s"change 11 to `$c`"))
+  val component12 = new Component("12", () => println("update 12"), (c) =>  println(s"change 12 to `$c`"))
+  val component111 = new Component("111", () => println("update 111"), (c) => println(s"change 111 to `$c`"))
+  val component112 = new Component("112", () => println("update 112"), (c) => println(s"change 112 to `$c`"))
+  val component1121 = new Component("1121", () => println("update 1121"), (c) => println(s"change 1121 to `$c`"))
+  val component121 = new Component("121", () => println("update 121"), (c) => println(s"change 121 to `$c`"))
+  val component122 = new Component("122", () => println("update 122"), (c) => println(s"change 122 to `$c`"))
 
-  // If we use this way, we should write wrapper around AnyRef and make a DSL for convenient
-  // dependency specification
+  // This one won't be initialised, because Component#hasDependent is not called
+  val component2 = new Component("2", () => println("update 2"), (c) => println(s"change 2 to `$c`"))
 
-  // Sending update signal to config 1. Configs 1, 10, 11, 12, 100, 120 will be updated
-  config1.foreach(_ ! Update)
+  // Component is initialised when Component#hasDependent is called or when it is passed to this function as a param.
+  component1 hasDependent component11 hasDependent component12
+  component11 hasDependent component111 hasDependent component112
+  component12 hasDependent component121 hasDependent component122
+  component112 hasDependent component1121
 
-  system.terminate()
+  // This would not work:
+  // component11 hasDependent component111 hasDependent component112
+  // component1 hasDependent component11 hasDependent component12
+
+  Thread.sleep(2000)
+
+  component11 changeTo "1"
+
+  // List of components
+//  Component.getComponents.keySet.foreach(println(_))
+
+  Component.terminateSystem()
 }
