@@ -12,31 +12,33 @@ import scala.concurrent.duration._
 import scala.collection.immutable.HashMap
 
 object Component {
-  private val system = ActorSystem("runtimeConfig")
-  implicit val timeout: Timeout = Timeout(5 seconds)
-  private var components: Map[String, Component] = new HashMap[String, Component]()
+  private val _system = ActorSystem("runtimeConfig")
+  private implicit val _timeout: Timeout = Timeout(5 seconds)
+  private var _components: Map[Int, Component] = new HashMap[Int, Component]()
+  def terminateSystem(){ _system.terminate() }
 
-  def terminateSystem(){ system.terminate() }
-
-  def getComponents = components
+  def components = _components
 }
 
-class Component(var id: String, var onReload: () => Unit, var onChange: String => Unit) {
+class Component(var onReload: () => Unit, var onChange: String => Unit) {
   import Component._
-  import system.dispatcher
+  import _system.dispatcher
 
-  components = components.+((id, this))
+  private var _actor: Future[ActorRef] = _
 
-  private var actor: Future[ActorRef] = _
+  val id = _components.size
+  _components = _components.+((id, this))
+
 
   def hasDependent(dependent: Component) = {
-    if (actor == null) actor = Future(system.actorOf(ConfigActor.props(onReload, onChange)))
-    val dependentActor = actor.flatMap(ask(_, AddDependent(dependent.onReload, dependent.onChange)).mapTo[ActorRef])
-    dependent.actor = dependentActor
+    if (_actor == null) _actor = Future(_system.actorOf(ConfigActor.props(onReload, onChange)))
+    val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent.onReload, dependent.onChange)).mapTo[ActorRef])
+    dependent._actor = dependentActor
     this
   }
 
-  def update = actor.foreach(_ ! Reload)
 
-  def changeTo(config: String) = actor.foreach(_ ! Change(config))
+  def reload = if (_actor != null) _actor.foreach(_ ! Reload) else onReload()
+
+  def changeTo(config: String) = if (_actor != null) _actor.foreach(_ ! Change(config)) else onChange(config)
 }
