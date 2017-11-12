@@ -1,8 +1,7 @@
 package core
 
-import core.actors.ConfigActor.{AddDependent, Change, Reload}
+import core.actors.ConfigActor.{AddDependent, Change, Reload, Value}
 import core.actors.ConfigActor
-
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -44,11 +43,11 @@ object Component {
   * dependent components when it's being reloaded or its config is changed. Provides methods for
   * getting configuration, reloading component and changing service's settings.
   *
-  * @param _getConfig function getting component configuration as string.
+  * @param _getValue function getting component configuration as string.
   * @param _onReload function called to reload the component.
   * @param _onChange function changing component config to passed string.
   */
-class Component(private var _getConfig: () => String,
+class Component(private var _getValue: () => String,
                 private var _onReload: () => Unit,
                 private var _onChange: String => Unit) {
   import Component._
@@ -75,35 +74,43 @@ class Component(private var _getConfig: () => String,
     * @param dependent depending component.
     * @return current component.
     */
-  def hasDependent(dependent: Component) = {
-    if (_actor == null) _actor = Future(_system.actorOf(ConfigActor.props(_onReload, _onChange)))
-    val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent._onReload, dependent._onChange)).mapTo[ActorRef])
+  def hasDependent(dependent: Component): Component = {
+    if (_actor == null) createActor()
+    val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent._getValue, dependent._onReload, dependent._onChange)).mapTo[ActorRef])
     dependent._actor = dependentActor
     this
   }
 
 
-  // valentiay: I suppose this is not thread safe and we must put getting config inside the actor
   /**
-    * Config getter.
+    * Config value getter.
     *
     * @return configuration of this component as String.
     */
-  def getConfig = _getConfig
+  def getValue = {
+    if (_actor == null) createActor()
+    _actor.flatMap(a => a ? Value)
+  }
 
-  // valentiay: I suppose this is not thread safe and we must put
-  // reloading service inside the actor for the 'else' case also.
   /**
     * Reloads this component and all dependent.
     */
-  def reload = if (_actor != null) _actor.foreach(_ ! Reload) else _onReload()
+  def reload() {
+    if (_actor == null) createActor()
+    _actor.foreach(_ ! Reload)
+  }
 
-  // valentiay: I suppose this is not thread safe and we must put
-  // updating config inside the actor for the 'else' case also.
   /**
     * Changes config to new value
     *
-    * @param config new config as String.
+    * @param value new config value as String.
     */
-  def changeTo(config: String) = if (_actor != null) _actor.foreach(_ ! Change(config)) else _onChange(config)
+  def changeTo(value: String) {
+    if (_actor == null) createActor()
+    _actor.foreach(_ ! Change(value))
+  }
+
+  private def createActor() {
+    _actor = Future(_system.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
+  }
 }

@@ -12,9 +12,16 @@ object Main extends App {
   *                 |
   *                 1121
   */
+  class SomeApp(var x: String) {
+    def reload(): Unit = println("reload App")
+    def change(newX: String): Unit = { x = newX }
+    def getValue(): String = x
+  }
+
+  var sa = new SomeApp("11")
 
   val component1 = new Component(() => "1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
-  val component11 = new Component(() => "11", () => println("update 11"), (c) => println(s"change 11 to `$c`"))
+  val component11 = new Component(sa.getValue, sa.reload, sa.change)
   val component12 = new Component(() => "12", () => println("update 12"), (c) =>  println(s"change 12 to `$c`"))
   val component111 = new Component(() => "111", () => println("update 111"), (c) => println(s"change 111 to `$c`"))
   val component112 = new Component(() => "112", () => println("update 112"), (c) => println(s"change 112 to `$c`"))
@@ -30,19 +37,24 @@ object Main extends App {
   component11 hasDependent component111 hasDependent component112
   component12 hasDependent component121 hasDependent component122
   component112 hasDependent component1121
-
-  println(component112.getConfig())
+  Thread.sleep(2000)
 
   // This would not work:
   // component11 hasDependent component111 hasDependent component112
   // component1 hasDependent component11 hasDependent component12
 
-  Thread.sleep(2000)
+  import scala.concurrent.ExecutionContext.Implicits.global
+  // Messages are received in other order
+  component11.getValue.foreach(a => println("1) " + a))
+  component11 changeTo "other"
+  component11.getValue.foreach(a => println("2) " + a))
+  component11 changeTo "other other"
+  component11.getValue.foreach(a => println("3) " + a))
+  component11.getValue.foreach(a => println("4) " + a))
+  component11.getValue.foreach(a => println("5) " + a))
 
-  component11 changeTo "1"
 
   // List of components
 //  Component.getComponents.keySet.foreach(println(_))
-
-  Component.terminateSystem()
+//  Component.terminateSystem()
 }
