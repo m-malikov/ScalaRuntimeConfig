@@ -3,6 +3,7 @@ package core.actors
 import akka.actor.{Actor, ActorRef, Props}
 
 import scala.collection.immutable.List
+import scala.concurrent.Future
 
 object ConfigActor {
   case class Value()
@@ -11,6 +12,8 @@ object ConfigActor {
   case class AddDependent(getValue: () => String,
                           onReload: () => Unit,
                           onChange: String => Unit)
+
+  case class AddDependentActor(dependent: Future[ActorRef])
 
   def props(getValue: () => String,
             onReload: () => Unit,
@@ -21,6 +24,7 @@ class ConfigActor(onReload: () => Unit,
                   onChange: String => Unit,
                   getValue: () => String) extends Actor {
   import ConfigActor._
+  implicit val ec = context.system.dispatcher
 
   private var dependents: List[ActorRef] = Nil
 
@@ -40,6 +44,9 @@ class ConfigActor(onReload: () => Unit,
       val dependent = context.actorOf(ConfigActor.props(getDependentValue, onDependentUpdate, onDependentChange))
       dependents = dependents.+:(dependent)
       sender() ! dependent
+
+    case AddDependentActor(dependent) =>
+      dependent.foreach((d) => dependents = dependents.+:(d))
 
     case Value =>
       val config: String = getValue()

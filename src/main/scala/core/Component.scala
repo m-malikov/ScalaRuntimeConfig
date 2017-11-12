@@ -1,6 +1,6 @@
 package core
 
-import core.actors.ConfigActor.{AddDependent, Change, Reload, Value}
+import core.actors.ConfigActor._
 import core.actors.ConfigActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
@@ -32,7 +32,7 @@ object Component {
     *
     * @return HashMap containing all created Components as pairs id -> component.
     */
-  def components = _components
+  def components: Map[Int, Component] = _components
 }
 
 
@@ -75,9 +75,13 @@ class Component(private var _getValue: () => String,
     * @return current component.
     */
   def hasDependent(dependent: Component): Component = {
-    if (_actor == null) createActor()
-    val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent._getValue, dependent._onReload, dependent._onChange)).mapTo[ActorRef])
-    dependent._actor = dependentActor
+    checkActor()
+    if (dependent._actor == null) {
+      val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent._getValue, dependent._onReload, dependent._onChange)).mapTo[ActorRef])
+      dependent._actor = dependentActor
+    } else {
+      _actor.foreach(ask(_, AddDependentActor(dependent._actor)))
+    }
     this
   }
 
@@ -87,8 +91,8 @@ class Component(private var _getValue: () => String,
     *
     * @return configuration of this component as String.
     */
-  def getValue = {
-    if (_actor == null) createActor()
+  def getValue: Future[Any] = {
+    checkActor()
     _actor.flatMap(a => a ? Value)
   }
 
@@ -96,7 +100,7 @@ class Component(private var _getValue: () => String,
     * Reloads this component and all dependent.
     */
   def reload() {
-    if (_actor == null) createActor()
+    checkActor()
     _actor.foreach(_ ! Reload)
   }
 
@@ -106,11 +110,14 @@ class Component(private var _getValue: () => String,
     * @param value new config value as String.
     */
   def changeTo(value: String) {
-    if (_actor == null) createActor()
+    checkActor()
     _actor.foreach(_ ! Change(value))
   }
 
-  private def createActor() {
-    _actor = Future(_system.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
+  /**
+    * Creates actor for this component if necessary
+    */
+  private def checkActor() {
+    if (_actor == null) _actor = Future(_system.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
   }
 }

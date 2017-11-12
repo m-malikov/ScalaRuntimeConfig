@@ -4,9 +4,9 @@ object Main extends App {
   /*
   *  Configs hierarchy:
   *
-  *          1           2
-  *       /     \
-  *      12     11
+  *          1       2
+  *       /     \  /
+  *      12      11
   *    /  |      | \
   *  122 121    111 112
   *                 |
@@ -19,6 +19,7 @@ object Main extends App {
   }
 
   var sa = new SomeApp("11")
+  var sa1 = new SomeApp("2")
 
   val component1 = new Component(() => "1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
   val component11 = new Component(sa.getValue, sa.reload, sa.change)
@@ -30,28 +31,24 @@ object Main extends App {
   val component122 = new Component(() => "122", () => println("update 122"), (c) => println(s"change 122 to `$c`"))
 
   // This one won't be initialised, because Component#hasDependent is not called
-  val component2 = new Component(() => "2", () => println("update 2"), (c) => println(s"change 2 to `$c`"))
+  val component2 = new Component(sa1.getValue, sa1.reload, sa1.change)
 
   // Component is initialised when Component#hasDependent is called or when it is passed to this function as a param.
   component1 hasDependent component11 hasDependent component12
   component11 hasDependent component111 hasDependent component112
   component12 hasDependent component121 hasDependent component122
   component112 hasDependent component1121
+  component2 hasDependent component11
   Thread.sleep(2000)
-
-  // This would not work:
-  // component11 hasDependent component111 hasDependent component112
-  // component1 hasDependent component11 hasDependent component12
 
   import scala.concurrent.ExecutionContext.Implicits.global
   // Messages are received in other order
-  component11.getValue.foreach(a => println("1) " + a))
-  component11 changeTo "other"
-  component11.getValue.foreach(a => println("2) " + a))
-  component11 changeTo "other other"
-  component11.getValue.foreach(a => println("3) " + a))
-  component11.getValue.foreach(a => println("4) " + a))
-  component11.getValue.foreach(a => println("5) " + a))
+  component2.getValue.foreach(a => println("1) " + a))
+  component2 changeTo "other"
+  component2.getValue.foreach(a => println("2) " + a))
+  component2.getValue.foreach(a => println("3) " + a))
+  component2.getValue.foreach(a => println("4) " + a))
+  component2.getValue.foreach(a => println("5) " + a))
 
 
   // List of components
