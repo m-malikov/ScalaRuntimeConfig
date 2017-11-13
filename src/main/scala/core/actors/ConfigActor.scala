@@ -3,7 +3,7 @@ package core.actors
 import akka.actor.{Actor, ActorRef, Props}
 
 import scala.collection.immutable.List
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object ConfigActor {
   case class Value()
@@ -24,7 +24,7 @@ class ConfigActor(onReload: () => Unit,
                   onChange: String => Unit,
                   getValue: () => String) extends Actor {
   import ConfigActor._
-  implicit val ec = context.system.dispatcher
+  implicit val ec: ExecutionContextExecutor = context.system.dispatcher
 
   private var dependents: List[ActorRef] = Nil
 

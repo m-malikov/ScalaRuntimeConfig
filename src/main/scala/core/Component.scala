@@ -59,7 +59,7 @@ class Component(private var _getValue: () => String,
   private var _actor: Future[ActorRef] = _
 
   /** Identification number of this component. Initialized with component order number. */
-  val id = _components.size
+  val id: Int = _components.size
   _components = _components.+((id, this))
 
 
