@@ -41,6 +41,7 @@ object Main extends App {
   component2 hasDependent component11
   Thread.sleep(2000)
 
+  // TODO: Find better context
   import scala.concurrent.ExecutionContext.Implicits.global
   // Messages are received in other order
   component2.getValue.foreach(a => println("1) " + a))
