@@ -8,7 +8,7 @@ import akka.util.Timeout
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.collection.immutable.HashMap
+import scala.collection.mutable
 
 object Component {
   /** Actor system for component actors. */
@@ -20,7 +20,7 @@ object Component {
   /** HashMap of application components. Stores all created Components as pairs id -> component.
     * @see Component#_id
     */
-  private var _components: Map[Int, Component] = new HashMap[Int, Component]()
+  private var _components = new mutable.HashMap[Int, Component]()
 
   /**
     * Terminates runtime config system. Call this method for stopping the application.
@@ -32,7 +32,7 @@ object Component {
     *
     * @return HashMap containing all created Components as pairs id -> component.
     */
-  def components: Map[Int, Component] = _components
+  def components: mutable.HashMap[Int, Component] = _components
 }
 
 
@@ -60,7 +60,7 @@ class Component(private var _getValue: () => String,
 
   /** Identification number of this component. Initialized with component order number. */
   val id: Int = _components.size
-  _components = _components.+((id, this))
+  _components += (id -> this)
 
 
   /**
