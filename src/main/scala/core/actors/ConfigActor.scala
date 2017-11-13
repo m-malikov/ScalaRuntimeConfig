@@ -2,7 +2,7 @@ package core.actors
 
 import akka.actor.{Actor, ActorRef, Props}
 
-import scala.collection.immutable.List
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object ConfigActor {
@@ -26,7 +26,7 @@ class ConfigActor(onReload: () => Unit,
   import ConfigActor._
   implicit val ec: ExecutionContextExecutor = context.system.dispatcher
 
-  private var dependents: List[ActorRef] = Nil
+  private var dependents = new ListBuffer[ActorRef]
 
   override def receive: Receive = {
     case Reload =>
@@ -42,11 +42,11 @@ class ConfigActor(onReload: () => Unit,
     case AddDependent(getDependentValue, onDependentUpdate, onDependentChange) =>
       // Adding depending
       val dependent = context.actorOf(ConfigActor.props(getDependentValue, onDependentUpdate, onDependentChange))
-      dependents = dependents.+:(dependent)
+      dependents += dependent
       sender() ! dependent
 
     case AddDependentActor(dependent) =>
-      dependent.foreach((d) => dependents = dependents.+:(d))
+      dependent.foreach(dependents += _)
 
     case Value =>
       val config: String = getValue()

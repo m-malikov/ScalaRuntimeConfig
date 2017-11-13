@@ -12,6 +12,7 @@ object Main extends App {
   *                 |
   *                 1121
   */
+  // TODO: Make real tests
   class SomeApp(var x: String) {
     def reload(): Unit = println("reload App")
     def change(newX: String): Unit = { x = newX }
