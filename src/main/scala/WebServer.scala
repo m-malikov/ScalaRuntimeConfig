@@ -3,13 +3,12 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.typesafe.config._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
-import configtree.ConfigTree
+import configtree.ConfigSupervisor
 
-import scala.util.parsing.json.JSON
+import java.io.File
 
 object WebServer {
 
@@ -20,16 +19,22 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-    val conf: ConfigObject = ConfigFactory.load().getObject("my.organization")
-    val confJson = JSON.parseFull(conf.render(ConfigRenderOptions.concise()))
-    val confTree = ConfigTree("organization", confJson)
+    val configSupervisor = ConfigSupervisor(Seq(new File("src/main/resources/deathstar.conf"),
+      new File("src/main/resources/notworking.conf"),
+      new File("src/main/resources/project.conf")))
 
-    val route =
-      path("hello") {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, confTree.getHtml))
-        }
+    val route = {
+      get {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, configSupervisor.getHtml))
+      } ~ post {
+        parameters('name) { (name) => {
+          formFieldMap { fields =>
+            configSupervisor.update("deathstar.conf", fields)
+            redirect("/", StatusCodes.Found)
+          }
+        }}
       }
+    }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 

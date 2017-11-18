@@ -2,7 +2,7 @@ name := "websarvar"
 
 version := "1.0"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.11.1"
 
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
