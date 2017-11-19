@@ -6,9 +6,13 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
-import configtree.ConfigSupervisor
-
+import configtree.ConfigWebSupervisor
 import java.io.File
+
+import akka.http.scaladsl.server.Route
+import core.Component
+
+import scala.util.{Failure, Success, Try}
 
 object WebServer {
 
@@ -19,17 +23,22 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-    val configSupervisor = ConfigSupervisor(Seq(new File("src/main/resources/deathstar.conf"),
-      new File("src/main/resources/notworking.conf"),
-      new File("src/main/resources/project.conf")))
+    val component1 = new Component(() => "1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
 
-    val route = {
+    val route: Route = {
       get {
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, configSupervisor.getHtml))
+        onComplete(ConfigWebSupervisor.getHtml) { (html: Try[String]) =>
+          html match {
+            case Success(html) => complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, html))
+            case _ => complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "failure"))
+          }
+        }
+        //complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, ConfigWebSupervisor.getHtml))
+
       } ~ post {
-        parameters('name) { (name) => {
+        parameters('id) { (id) => {
           formFieldMap { fields =>
-            configSupervisor.update(name, fields)
+            ConfigWebSupervisor.update(id.toInt, fields{"config_value"})
             redirect("/", StatusCodes.Found)
           }
         }}
