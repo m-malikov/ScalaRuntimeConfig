@@ -7,12 +7,11 @@ import akka.stream.ActorMaterializer
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 import configtree.ConfigWebSupervisor
-import java.io.File
 
 import akka.http.scaladsl.server.Route
 import core.Component
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 object WebServer {
 
