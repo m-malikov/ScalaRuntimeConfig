@@ -23,7 +23,7 @@ object WebServer {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-    val component1 = new Component(() => "1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
+    val component1 = new Component("main component", () => "1", () => println("update 1"), (c) => println(s"change 1 to `$c`"))
 
     val route: Route = {
       get {

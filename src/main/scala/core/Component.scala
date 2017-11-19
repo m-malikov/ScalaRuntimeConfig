@@ -47,7 +47,8 @@ object Component {
   * @param _onReload function called to reload the component.
   * @param _onChange function changing component config to passed string.
   */
-class Component(private var _getValue: () => String,
+class Component(val name: String,
+                private var _getValue: () => String,
                 private var _onReload: () => Unit,
                 private var _onChange: String => Unit) {
   import Component._
