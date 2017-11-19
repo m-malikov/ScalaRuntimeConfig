@@ -1,6 +1,17 @@
+import java.nio.file.{Path, Paths}
+
+import components.FileComponent
 import core.Component
 
+//import scala.concurrent.Await
+//import scala.concurrent.duration._
+
+
 object Main extends App {
+//  var comp1 = new FileComponent(Paths.get("src/main/resources/abc"))
+//  println(Await.result(comp1.getValue, Duration.Inf))
+//  comp1.reload()
+//  comp1.changeTo("akka kakka")
   /*
   *  Configs hierarchy:
   *
@@ -53,7 +64,7 @@ object Main extends App {
   component2.getValue.foreach(a => println("5) " + a))
 
 
-  // List of components
-//  Component.getComponents.keySet.foreach(println(_))
-//  Component.terminateSystem()
+   List of components
+  Component.getComponents.keySet.foreach(println(_))
+  Component.terminateSystem()
 }
