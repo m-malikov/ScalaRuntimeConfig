@@ -6,7 +6,8 @@ import java.nio.file._
 
 import collection.JavaConverters._
 
-class FileComponent(path: Path) extends Component(
+class FileComponent(name: String, path: Path) extends Component(
+  name,
   () => {
     Files.readAllLines(path)
     .asScala

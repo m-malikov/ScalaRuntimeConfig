@@ -1,5 +1,7 @@
 import java.nio.file.{Path, Paths}
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import components.FileComponent
 import core.Component
 
@@ -54,7 +56,7 @@ object Main extends App {
   Thread.sleep(2000)
 
   // TODO: Find better context
-  import scala.concurrent.ExecutionContext.Implicits.global
+  /*import scala.concurrent.ExecutionContext.Implicits.global
   // Messages are received in other order
   component2.getValue.foreach(a => println("1) " + a))
   component2 changeTo "other"
@@ -66,5 +68,10 @@ object Main extends App {
 
    List of components
   Component.getComponents.keySet.foreach(println(_))
-  Component.terminateSystem()
+  Component.terminateSystem()*/
+  implicit val system: ActorSystem = ActorSystem("my-system")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  val server = new RestServer()
+  server.startServer("localhost", 8080)
+
 }
