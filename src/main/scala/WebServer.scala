@@ -29,7 +29,7 @@ object WebServer {
       } ~ post {
         parameters('name) { (name) => {
           formFieldMap { fields =>
-            configSupervisor.update("deathstar.conf", fields)
+            configSupervisor.update(name, fields)
             redirect("/", StatusCodes.Found)
           }
         }}
