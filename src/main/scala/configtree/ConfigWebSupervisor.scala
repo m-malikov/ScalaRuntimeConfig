@@ -29,7 +29,7 @@ object ConfigWebSupervisor {
           p.success(list.foldLeft("")((acc: String, entry) =>
             acc +
               s"""${entry._1._2}</br><form action='/update?id=${entry._1._1}' method='post'>
-          <input type="textarea" name="config_value" value="${entry._2}"></input>
+          <textarea name="config_value">${entry._2}</textarea><br>
           <button type='submit'>update</button></form>"""))
         case Failure(ex) => p.failure(ex)
       }
