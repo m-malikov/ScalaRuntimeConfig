@@ -2,3 +2,5 @@
 .conf
 target/
 project/target/
+build.sbt
+.gitignire
