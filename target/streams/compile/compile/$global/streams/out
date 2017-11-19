@@ -1,4 +1,0 @@
-[0m[[0m[33mwarn[0m] [0m[0m/home/user/code/ScalaRuntimeConfig/src/main/scala/configTree.scala:14:20: non-variable type argument String in type pattern scala.collection.immutable.Map[String,_] (the underlying of Map[String,_]) is unchecked since it is eliminated by erasure[0m
-[0m[[0m[33mwarn[0m] [0m[0m      case Some(x: Map[String, _]) => {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                   ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m

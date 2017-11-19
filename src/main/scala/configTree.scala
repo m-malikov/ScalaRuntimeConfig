@@ -34,9 +34,9 @@ case class ConfigTreeNode(name: String, children: Iterable[ConfigTree]) extends 
   }
 
   def getTextConfig(depth : Int = 0): String = {
-    "{\n" + children.foldLeft("") {(z, config: ConfigTree) =>
+    children.foldLeft("") {(z, config: ConfigTree) =>
       "  " * (depth+1) + config.name + " = " + config.getTextConfig(depth + 1) + "\n"
-    } + "  " * depth + "}\n"
+    }
   }
 }
 
