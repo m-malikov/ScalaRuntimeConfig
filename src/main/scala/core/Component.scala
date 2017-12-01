@@ -43,15 +43,20 @@ object Component {
   * dependent components when it's being reloaded or its config is changed. Provides methods for
   * getting configuration, reloading component and changing service's settings.
   *
-  * @param _getValue function getting component configuration as string.
-  * @param _onReload function called to reload the component.
-  * @param _onChange function changing component config to passed string.
+  * Every successor must override _getValue, _onReload, _onChange methods or exception will be thrown.
+  *
+  * @see Component#_getValue
+  * @see Component#_onReload
+  * @see Component#_onChange
+  *
+  * @param name name of component instance
   */
-class Component(val name: String,
-                private var _getValue: () => String,
-                private var _onReload: () => Unit,
-                private var _onChange: String => Unit) {
+class Component protected (val name: String) {
   import Component._
+
+  protected def _getValue: () => String = throw new Exception("_getValue not overridden")
+  protected def _onReload: () => Unit = throw new Exception("_onReload not overridden")
+  protected def _onChange: String => Unit = throw new Exception("_onChange not overridden")
 
   // Context for futures.
   import _system.dispatcher
@@ -60,7 +65,7 @@ class Component(val name: String,
   private var _actor: Future[ActorRef] = _
 
   /** Identification number of this component. Initialized with component order number. */
-  val id: Int = _components.size
+  final val id: Int = _components.size
   _components += (id -> this)
 
 
@@ -75,7 +80,7 @@ class Component(val name: String,
     * @param dependent depending component.
     * @return current component.
     */
-  def hasDependent(dependent: Component): Component = {
+  final def hasDependent(dependent: Component): Component = {
     checkActor()
     if (dependent._actor == null) {
       val dependentActor = _actor.flatMap(ask(_, AddDependent(dependent._getValue, dependent._onReload, dependent._onChange)).mapTo[ActorRef])
@@ -92,7 +97,7 @@ class Component(val name: String,
     *
     * @return configuration of this component as String.
     */
-  def getValue: Future[Any] = {
+  final def value: Future[Any] = {
     checkActor()
     _actor.flatMap(a => a ? Value)
   }
@@ -100,7 +105,7 @@ class Component(val name: String,
   /**
     * Reloads this component and all dependent.
     */
-  def reload() {
+  final def reload() {
     checkActor()
     _actor.foreach(_ ! Reload)
   }
@@ -110,7 +115,7 @@ class Component(val name: String,
     *
     * @param value new config value as String.
     */
-  def changeTo(value: String) {
+  final def changeTo(value: String) {
     checkActor()
     _actor.foreach(_ ! Change(value))
   }
@@ -118,7 +123,7 @@ class Component(val name: String,
   /**
     * Creates actor for this component if necessary
     */
-  private def checkActor() {
+  private final def checkActor() {
     if (_actor == null) _actor = Future(_system.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
   }
 }

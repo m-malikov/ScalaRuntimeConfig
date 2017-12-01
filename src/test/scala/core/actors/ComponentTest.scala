@@ -2,7 +2,7 @@ package core.actors
 
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
-import core.Component
+import components.TestComponent
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.Await
@@ -17,8 +17,8 @@ class ComponentTest extends TestKit(ActorSystem("componentTest")) with ImplicitS
 
   "A Component" must {
     "return given value" in {
-      val component = new Component("testComponent", () => "test value", () => {}, (_) => {})
-      Await.result(component.getValue, Duration("1 second"))  shouldBe "test value"
+      val component = new TestComponent("testComponent", "test value")
+      Await.result(component.value, Duration("1 second")) shouldBe "test value"
     }
 
   }

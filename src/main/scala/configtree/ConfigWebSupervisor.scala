@@ -19,7 +19,7 @@ object ConfigWebSupervisor {
 
   def getHtml: Future[String] = {
     val valuesMap = for ((_, component) <- Component.components) yield
-      { ((component.id, component.name), component.getValue) }
+      { ((component.id, component.name), component.value) }
     val valuesFuture = Future.traverse(valuesMap)
       {case (key, futureValue) => futureValue.map(key -> _)}
     val p =  Promise[String]()
