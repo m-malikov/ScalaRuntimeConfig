@@ -1,6 +1,7 @@
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import components.{TestComponent}
+import core.Component
+import server.RestServer
 
 //import scala.concurrent.Await
 //import scala.concurrent.duration._

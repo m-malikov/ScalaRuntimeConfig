@@ -1,12 +1,11 @@
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
+package server
 
-import scala.concurrent.Future
-import configtree.ConfigWebSupervisor
+import akka.actor.ActorSystem
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.stream.ActorMaterializer
+import configtree.ConfigWebSupervisor
 
 import scala.util.{Success, Try}
 
@@ -31,12 +30,5 @@ trait RestService {
         }
       }}
     }
-  }
-}
-
-class RestServer(implicit val system:ActorSystem,
-                 implicit val materializer: ActorMaterializer) extends RestService {
-  def startServer(address: String, port: Int): Future[Http.ServerBinding] = {
-    Http().bindAndHandle(route, address, port)
   }
 }
