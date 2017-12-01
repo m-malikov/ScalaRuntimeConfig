@@ -15,7 +15,9 @@ trait RestService {
 
   val route: Route = {
     get {
-      onComplete(ConfigWebSupervisor.getHtml) { (responce: Try[String]) =>
+      pathPrefix("static") {
+        getFromResourceDirectory("static")
+      } ~ onComplete(ConfigWebSupervisor.getHtml) { (responce: Try[String]) =>
         responce match {
           case Success(html) => complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, html))
           case _ => complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "failure"))

@@ -1,6 +1,6 @@
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import core.Component
+import components.TestComponent
 import server.RestServer
 
 //import scala.concurrent.Await
