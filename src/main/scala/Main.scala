@@ -1,9 +1,7 @@
-import java.nio.file.{Path, Paths}
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import components.FileComponent
 import core.Component
+import server.RestServer
 
 //import scala.concurrent.Await
 //import scala.concurrent.duration._
