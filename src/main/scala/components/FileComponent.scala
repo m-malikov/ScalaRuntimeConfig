@@ -1,18 +1,18 @@
 package components
 
-import core.Component
-
 import java.nio.file._
 
-import collection.JavaConverters._
+import core.Component
+
+import scala.collection.JavaConverters._
 
 class FileComponent(name: String, path: Path) extends Component(name) {
-  override protected def _getValue {
+  override protected def _getValue: String =
     Files.readAllLines(path)
     .asScala
     .foldRight(new StringBuilder())((str: String, builder: StringBuilder) => builder.append("\n" + str))
     .mkString
-  }
+
 
   override protected def _onReload: () => Unit = () => println(s"Reloaded File Component '$name")
 
