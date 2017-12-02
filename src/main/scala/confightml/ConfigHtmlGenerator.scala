@@ -26,10 +26,15 @@ object ConfigHtmlGenerator {
 
   private def createForm(name: String, id: String, value: String) =
     s"""|$name
-        |  <div class="editor">$value</div>
-        |  <br>
-        |  <button type='submit'>update</button>
-        |  <br>
+        |  <div class=config>
+        |   <div class="editor" id="editor-$id">$value</div>
+        |   <br>
+        |   <form action='update?id=$id' method='POST'>
+        |     <input type="hidden" name="config_value" id="input-$id"/>
+        |     <button id="button-$id">update</button>
+        |   </form>
+        |   <br>
+        |  </div>
         |""".stripMargin
 
   /**
