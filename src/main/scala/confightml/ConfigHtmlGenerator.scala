@@ -23,9 +23,9 @@ object ConfigHtmlGenerator {
 
   private def createForm(name: String, id: String, value: String) =
     s"""|$name
-        |<form action='/update?id=$id' method='post'>
-        |  <textarea name="config_value">$value</textarea><br>
-        |  <button type='submit'>update</button></form>
+        |  <div class="editor">$value</div>
+        |  <br>
+        |  <button type='submit'>update</button>
         |""".stripMargin
 
   /**
@@ -59,12 +59,28 @@ object ConfigHtmlGenerator {
       |<html>
       |  <head>
       |    <meta chatset = "utf-8">
+      |    <style type="text/css" media="screen">
+      |       .editor {
+      |         width: 500px;
+      |         height: 300px;
+      |       }
+      |    </style>
       |  </head>
       |  <body>
     """.stripMargin
 
   private val htmlSuffix =
     """
+      |    <script src="static/src-min/ace.js" type="text/javascript"></script>
+      |    <script>
+      |     var editors = document.getElementsByClassName("editor");
+      |     for (var i = 0; i < editors.length; i++) {
+      |       editor = ace.edit(editors.item(i));
+      |       ace.edit()
+      |       editor.setTheme("ace/theme/chrome");
+      |       editor.getSession().setMode("ace/mode/javascript");
+      |     }
+      |    </script>
       |  </body>
       |</html>
     """.stripMargin
