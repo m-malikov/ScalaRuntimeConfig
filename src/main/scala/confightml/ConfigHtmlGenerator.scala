@@ -29,7 +29,7 @@ object ConfigHtmlGenerator {
         |  <div class=config>
         |   <div class="editor" id="editor-$id">$value</div>
         |   <br>
-        |   <form action='update?id=$id' method='POST'>
+        |   <form action='update?id=$id' method='POST' id='form-$id'>
         |     <input type="hidden" name="config_value" id="input-$id"/>
         |     <button id="button-$id">update</button>
         |   </form>
@@ -51,8 +51,8 @@ object ConfigHtmlGenerator {
     Future {
       valuesFuture.onComplete {
         case Success(list: mutable.Iterable[_]) =>
-          p.success(list.foldLeft("")((acc: String, entry) =>
-            acc + createForm(entry._1._1.toString, entry._1._1.toString, entry._1._2)))
+          p.success(list.foldLeft("")((acc: String, entry: ((Int, String), Any)) =>
+            acc + createForm(entry._1._2.toString, entry._1._1.toString, entry._2.toString)))
         case Failure(ex) => p.failure(ex)
       }
     }

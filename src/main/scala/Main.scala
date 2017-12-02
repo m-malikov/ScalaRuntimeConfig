@@ -1,6 +1,8 @@
+import java.nio.file.Paths
+
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import components.TestComponent
+import components.FileComponent
 import server.RestServer
 
 //import scala.concurrent.Await
@@ -24,8 +26,10 @@ object Main extends App {
   *                 1121
   */
   // TODO: Make real tests
-
-  val component1 = new TestComponent("1", "1")
+  val fileComponent1 = new FileComponent("Deathstar", Paths.get("src/main/resources", "deathstar.conf"))
+  val fileComponent2 = new FileComponent("Users", Paths.get("src/main/resources", "notworking.conf"))
+  val fileComponent3 = new FileComponent("Project", Paths.get("src/main/resources", "project.conf"))
+  /*val component1 = new TestComponent("1", "1")
   val component11 = new TestComponent("11", "11")
   val component12 = new TestComponent("12", "12")
   val component111 = new TestComponent("111", "111")
@@ -33,14 +37,15 @@ object Main extends App {
   val component1121 = new TestComponent("1121", "1121")
   val component121 = new TestComponent("121", "121")
   val component122 = new TestComponent("122", "122")
-  val component2 = new TestComponent("2", "2")
+  val component2 = new TestComponent("2", "2")*/
+
 
   // Component is initialised when Component#hasDependent is called or when it is passed to this function as a param.
-  component1 hasDependent component11 hasDependent component12
+  /*component1 hasDependent component11 hasDependent component12
   component11 hasDependent component111 hasDependent component112
   component12 hasDependent component121 hasDependent component122
   component112 hasDependent component1121
-  component2 hasDependent component11
+  component2 hasDependent component11*/
   Thread.sleep(2000)
 
   // TODO: Find better context
