@@ -2,11 +2,12 @@ package components
 
 import java.nio.file._
 
-import core.Component
+import core.{Component, ComponentSystem}
 
 import scala.collection.JavaConverters._
 
-class FileComponent(name: String, path: Path) extends Component(name) {
+class FileComponent(name: String, path: Path)(implicit componentSystem: ComponentSystem)
+  extends Component(name) {
   override protected def _getValue: () => String = () =>
     Files.readAllLines(path)
       .asScala

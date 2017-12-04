@@ -26,9 +26,9 @@ object Main extends App {
   *                 1121
   */
   // TODO: Make real tests
-  val fileComponent1 = new FileComponent("Deathstar", Paths.get("src/main/resources", "deathstar.conf"))
-  val fileComponent2 = new FileComponent("Users", Paths.get("src/main/resources", "notworking.conf"))
-  val fileComponent3 = new FileComponent("Project", Paths.get("src/main/resources", "project.conf"))
+//  val fileComponent1 = new FileComponent("Deathstar", Paths.get("src/main/resources", "deathstar.conf"))
+//  val fileComponent2 = new FileComponent("Users", Paths.get("src/main/resources", "notworking.conf"))
+//  val fileComponent3 = new FileComponent("Project", Paths.get("src/main/resources", "project.conf"))
   /*val component1 = new TestComponent("1", "1")
   val component11 = new TestComponent("11", "11")
   val component12 = new TestComponent("12", "12")
@@ -46,7 +46,7 @@ object Main extends App {
   component12 hasDependent component121 hasDependent component122
   component112 hasDependent component1121
   component2 hasDependent component11*/
-  Thread.sleep(2000)
+//  Thread.sleep(2000)
 
   // TODO: Find better context
   // import scala.concurrent.ExecutionContext.Implicits.global

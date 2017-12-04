@@ -4,36 +4,36 @@ import core.actors.ConfigActor._
 import core.actors.ConfigActor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
-import akka.util.Timeout
+//import akka.util.Timeout
 
 import scala.concurrent.Future
-import scala.concurrent.duration._
-import scala.collection.mutable
+//import scala.concurrent.duration._
+//import scala.collection.mutable
 
-object Component {
-  /** Actor system for component actors. */
-  private val _system = ActorSystem("runtimeConfig")
-
-  /** Timeout for Futures. */
-  private implicit val _timeout: Timeout = Timeout(5 seconds)
-
-  /** HashMap of application components. Stores all created Components as pairs id -> component.
-    * @see Component#_id
-    */
-  private var _components = new mutable.HashMap[Int, Component]()
-
-  /**
-    * Terminates runtime config system. Call this method for stopping the application.
-    */
-  def terminateSystem(){ _system.terminate() }
-
-  /**
-    * Getter for #_components.
-    *
-    * @return HashMap containing all created Components as pairs id -> component.
-    */
-  def components: mutable.HashMap[Int, Component] = _components
-}
+//object Component {
+//  /** Actor system for component actors. */
+//  private val _system = ActorSystem("runtimeConfig")
+//
+//  /** Timeout for Futures. */
+//  private implicit val _timeout: Timeout = Timeout(5 seconds)
+//
+//  /** HashMap of application components. Stores all created Components as pairs id -> component.
+//    * @see Component#_id
+//    */
+//  private var _components = new mutable.HashMap[Int, Component]()
+//
+//  /**
+//    * Terminates runtime config system. Call this method for stopping the application.
+//    */
+//  def terminateSystem(){ _system.terminate() }
+//
+//  /**
+//    * Getter for #_components.
+//    *
+//    * @return HashMap containing all created Components as pairs id -> component.
+//    */
+//  def components: mutable.HashMap[Int, Component] = _components
+//}
 
 
 /**
@@ -51,22 +51,22 @@ object Component {
   *
   * @param name name of component instance
   */
-class Component protected (val name: String) {
-  import Component._
+class Component protected (val name: String)(implicit system: ComponentSystem) {
+  import system._
 
   protected def _getValue: () => String = throw new Exception("_getValue not overridden")
   protected def _onReload: () => Unit = throw new Exception("_onReload not overridden")
   protected def _onChange: String => Unit = throw new Exception("_onChange not overridden")
 
   // Context for futures.
-  import _system.dispatcher
+  import actorSystem.dispatcher
 
   /** Akka actor reliable for this component */
   private var _actor: Future[ActorRef] = _
 
   /** Identification number of this component. Initialized with component order number. */
-  final val id: Int = _components.size
-  _components += (id -> this)
+  final val id: Int = components.size
+  components += (id -> this)
 
 
   /**
@@ -124,6 +124,6 @@ class Component protected (val name: String) {
     * Creates actor for this component if necessary
     */
   private final def checkActor() {
-    if (_actor == null) _actor = Future(_system.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
+    if (_actor == null) _actor = Future(actorSystem.actorOf(ConfigActor.props(_getValue, _onReload, _onChange)))
   }
 }
