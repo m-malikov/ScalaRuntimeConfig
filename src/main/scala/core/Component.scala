@@ -9,8 +9,8 @@ import scala.concurrent.Future
 
 
 /**
-  * Basic class corresponding application component having some configuration, optionally dependency
-  * components and dependent components. If one component is depending on other, the first one must be reloaded
+  * Basic class-representative of config files, a compound of config hierarchy.
+  * If one component is depending on other, the first one must be reloaded
   * when the second one's configuration is changed. Each component has an akka actor reliable for notifying
   * dependent components when it's being reloaded or its config is changed. Provides methods for
   * getting configuration, reloading component and changing service's settings.
@@ -41,18 +41,66 @@ class Component protected (val name: String)(implicit componentSystem: Component
 
 
   /**
-    * DSL method for defining dependent components for current one. This method can be used in chains for
+    * DSL methods for defining dependent components for the current one. This method can be used in chains for
     * specifying dependent actors for first actor in the chain.
     *
-    * @example `component1 hasDependent component11 hasDependent component12` this means that
-    *         component11 and component12 depend on component1.
+    * @example `component1 above component11 andAbove component12` means that
+    *         component11 and component12 depend on component1, or, in other words
+    *         component1 is above component11 and component12 in the actor's tree
     *
+    *         c1
+    *        /  \
+    *      c11  c12
     *
+    */
+
+  /**
+   * @param dependent depending component.
+   * @return depending component.
+   */
+  final def above(dependent: Component): Component = {
+    _actor ! AddDependentActor(dependent._actor)
+    this
+  }
+
+  /**
     * @param dependent depending component.
     * @return current component.
     */
-  final def hasDependent(dependent: Component): Component = {
+  final def andAbove(dependent: Component): Component = {
     _actor ! AddDependentActor(dependent._actor)
+    this
+  }
+
+  /**
+    * DSL methods for defining dependencies for the current component. This method can be used in chains for
+    * specifying dependencies actors for first actor in the chain.
+    *
+    * @example `component1 below component11 andBelow component12` means that
+    *         component11 and component12 are dependencies for component1, or, in other words
+    *         component1 is below component11 and component12 in the actor's tree
+    *
+    *      c11   c12
+    *        \  /
+    *         c1
+    *
+    */
+
+  /**
+    * @param dependency dependency component.
+    * @return current component.
+    */
+  final def below(dependency: Component): Component = {
+    dependency._actor ! AddDependentActor(_actor)
+    this
+  }
+
+  /**
+    * @param dependency dependency component.
+    * @return current component.
+    */
+  final def andBelow(dependency: Component): Component = {
+    dependency._actor ! AddDependentActor(_actor)
     this
   }
 
@@ -60,7 +108,7 @@ class Component protected (val name: String)(implicit componentSystem: Component
   /**
     * Config value getter.
     *
-    * @return configuration of this component as String.
+    * @return config value as String.
     */
   final def value: Future[Any] = {
     _actor ? Value
@@ -74,7 +122,7 @@ class Component protected (val name: String)(implicit componentSystem: Component
   }
 
   /**
-    * Changes config to new value
+    * Changes config value
     *
     * @param value new config value as String.
     */
