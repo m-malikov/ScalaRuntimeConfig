@@ -15,7 +15,7 @@ class FileComponent(name: String, path: Path)(implicit componentSystem: Componen
       .reverse
       .mkString
 
-  override protected def _onReload: () => Unit = () => println(s"Reloaded File Component '$name")
+  override protected def _onReload: () => Unit = () => println(s"Reloaded File Component '$name'")
 
   override protected def _onChange: String => Unit = (newValue: String) => Files.write(path, newValue.getBytes("utf-8"))
 

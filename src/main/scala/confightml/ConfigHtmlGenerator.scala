@@ -14,9 +14,9 @@ import scala.util.{Failure, Success}
   * Handles interaction between webserver and actor model
   */
 
-object ConfigHtmlGenerator {
+class ConfigHtmlGenerator (implicit val componentSystem: ComponentSystem) {
   // TODO
-  private implicit val componentSystem: ComponentSystem = new ComponentSystem("httpConfig")
+//  private implicit val componentSystem: ComponentSystem = new ComponentSystem("httpConfig")
 
   /**
     * Generates a string with an html form for a config
