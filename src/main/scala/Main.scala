@@ -14,7 +14,7 @@ object Main extends App {
   val fileComponent2 = new FileComponent("Users", Paths.get("src/main/resources", "notworking.conf"))
   val fileComponent3 = new FileComponent("Project", Paths.get("src/main/resources", "project.conf"))
 
-  fileComponent1 hasDependent fileComponent2
+  fileComponent1 above fileComponent2
 
 
   implicit val system: ActorSystem = ActorSystem("my-system")
