@@ -45,7 +45,7 @@ class Component protected (val name: String)(implicit componentSystem: Component
     * specifying dependent actors for first actor in the chain.
     *
     * @example `component1 above component11 andAbove component12` means that
-    *         component11 and component12 depend on component1, or
+    *         component11 and component12 depend on component1, or, in other words
     *         component1 is above component11 and component12 in the actor's tree
     *
     *         c1
@@ -60,7 +60,7 @@ class Component protected (val name: String)(implicit componentSystem: Component
    */
   final def above(dependent: Component): Component = {
     _actor ! AddDependentActor(dependent._actor)
-    dependent
+    this
   }
 
   /**
@@ -69,6 +69,38 @@ class Component protected (val name: String)(implicit componentSystem: Component
     */
   final def andAbove(dependent: Component): Component = {
     _actor ! AddDependentActor(dependent._actor)
+    this
+  }
+
+  /**
+    * DSL methods for defining dependencies for the current component. This method can be used in chains for
+    * specifying dependencies actors for first actor in the chain.
+    *
+    * @example `component1 below component11 andBelow component12` means that
+    *         component11 and component12 are dependencies for component1, or, in other words
+    *         component1 is below component11 and component12 in the actor's tree
+    *
+    *      c11   c12
+    *        \  /
+    *         c1
+    *
+    */
+
+  /**
+    * @param dependency dependency component.
+    * @return current component.
+    */
+  final def below(dependency: Component): Component = {
+    dependency._actor ! AddDependentActor(_actor)
+    this
+  }
+
+  /**
+    * @param dependency dependency component.
+    * @return current component.
+    */
+  final def andBelow(dependency: Component): Component = {
+    dependency._actor ! AddDependentActor(_actor)
     this
   }
 
