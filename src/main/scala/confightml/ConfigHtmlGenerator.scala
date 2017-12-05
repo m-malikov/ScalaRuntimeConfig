@@ -2,7 +2,7 @@ package confightml
 
 import java.nio.file.{Files, Paths}
 
-import core.Component
+import core.{ComponentSystem}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -14,7 +14,9 @@ import scala.util.{Failure, Success}
   * Handles interaction between webserver and actor model
   */
 
-object ConfigHtmlGenerator {
+class ConfigHtmlGenerator (implicit val componentSystem: ComponentSystem) {
+  // TODO
+//  private implicit val componentSystem: ComponentSystem = new ComponentSystem("httpConfig")
 
   /**
     * Generates a string with an html form for a config
@@ -43,7 +45,7 @@ object ConfigHtmlGenerator {
     */
 
   private def configsToHtml: Future[String] = {
-    val valuesMap = for ((_, component) <- Component.components) yield
+    val valuesMap = for ((_, component) <- componentSystem.components) yield
       { ((component.id, component.name), component.value) }
     val valuesFuture = Future.traverse(valuesMap)
       {case (key, futureValue) => futureValue.map(key -> _)}
@@ -89,6 +91,6 @@ object ConfigHtmlGenerator {
     */
 
   def update(id: Int, value: String): Unit = {
-    Component.components{id}.changeTo(value)
+    componentSystem.components{id}.changeTo(value)
   }
 }
