@@ -9,11 +9,8 @@ object ConfigActor {
   case class Value()
   case class Reload()
   case class Change(config: String)
-  case class AddDependent(getValue: () => String,
-                          onReload: () => Unit,
-                          onChange: String => Unit)
 
-  case class AddDependentActor(dependent: Future[ActorRef])
+  case class AddDependentActor(dependent: ActorRef)
 
   def props(getValue: () => String,
             onReload: () => Unit,
@@ -39,14 +36,8 @@ class ConfigActor(onReload: () => Unit,
       onChange(value)
       dependents.foreach(_ ! Reload)
 
-    case AddDependent(getDependentValue, onDependentUpdate, onDependentChange) =>
-      // Adding depending
-      val dependent = context.actorOf(ConfigActor.props(getDependentValue, onDependentUpdate, onDependentChange))
-      dependents += dependent
-      sender() ! dependent
-
     case AddDependentActor(dependent) =>
-      dependent.foreach(dependents += _)
+      dependents += dependent
 
     case Value =>
       val config: String = getValue()
